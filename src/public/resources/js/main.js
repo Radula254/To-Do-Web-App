@@ -11,12 +11,12 @@ renderTodoList();
 
 //Add items to the todo list when text is in the input field.
 //Add button is clicked
-document.getElementById('addItem').addEventListener('click', function() {
+document.getElementById('addItem').addEventListener('click', function () {
     let value = document.getElementById('item').value;
     if(value) {
-        add();
+        add(value);
     }
-    dataObjectUpdated();
+    
 });
 
 document.getElementById('item').addEventListener('keydown', function (e) {
@@ -29,8 +29,10 @@ document.getElementById('item').addEventListener('keydown', function (e) {
 function add(value) {
     addItemPage(value);
     document.getElementById('item').value = '';
+    sendItemToAPI(value);
 
     data.todo.push(value);
+    dataObjectUpdated();
 }
 
 function renderTodoList() {
@@ -116,4 +118,21 @@ function addItemPage(text, completed) {
    item.appendChild(buttons);
 
    list.insertBefore(item, list.childNodes[0]);
+}
+
+/*Sending to API*/
+function sendItemToAPI(item) {
+    let req = new XMLHttpRequest();
+    req.open('POST', '/add');
+    req.setRequestHeader('Content-Type', 'application/json');
+    req.send(JSON.stringify({ item: item }));
+
+    req.addEventListener('load', () => {
+        console.log(req.responseText);
+    });
+
+    req.addEventListener('error', () => {
+        console.log('Ooooh man!!');
+        console.log(e);
+    });
 }
